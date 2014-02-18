@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Bappy Flird</title>
+        <script src="phaser.min.js"></script>
+    </head>
+    <body>
+
+    <script type="text/javascript">
+
+    window.onload = function() {
+
+        var game = new Phaser.Game(288, 512, Phaser.CANVAS, 'game-canvas', { preload: preload, create: create, update: update, render: render });
+
+        function preload() {
+
+            game.load.image('background','flappybackground.png');
+            game.load.image('bird','bird.png');
+            game.load.image('player','player.png');
+
+        }
+
+        var player;
+        var fixed;
+        var cursors;
+
+        function create() {
+            game.world.setBounds(0, 0, 1400, 512);
+
+            background = game.add.tileSprite(0, 0, 1400, 512, 'background');
+
+            //  Text
+            stateText = game.add.text(game.world.centerX,game.world.centerY,'', { fontSize: '84px', fill: '#fff' });
+            stateText.anchor.setTo(0.5, 0.5);
+            stateText.visible = false;
+
+            player = game.add.sprite(100, 100, 'player');
+            player.scale.setTo(2,2);
+
+            //player.body.collideWorldBounds = true;
+
+            // give it a push forwards
+            player.body.velocity.add(100, 0);
+
+            // some gravity
+            player.body.gravity.setTo(0, 10);
+
+            for (i=0; i < 50; i++)
+            {
+                bird = game.add.sprite(game.rnd.integerInRange(0,1400), game.rnd.integerInRange(0,512), 'bird');
+                bird.scale.setTo(2,2);
+            }
+
+            // capture spaces
+            game.input.keyboard.addKeyCapture(Phaser.Keyboard.SPACEBAR);
+
+            game.camera.follow(player);
+        }
+
+        function update() {
+            if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+            {
+                player.body.velocity.subtract(0, 50);
+            }
+
+            if (player.y >= (game.world.bounds.height - player.height))
+            {
+                console.log('END');
+
+                player.body.gravity.setTo(0, 0);
+                player.body.velocity.add(0, 0);
+
+                stateText.content=" GAME OVER \n Click to restart";
+                stateText.visible = true;
+
+                //the "click to restart" handler
+                game.input.onTap.addOnce(create,this);
+            }
+
+            /*if (cursors.up.isDown)
+            {
+                player.body.velocity.y = -200;
+            }
+            else if (cursors.down.isDown)
+            {
+                player.body.velocity.y = 200;
+            }
+
+            if (cursors.left.isDown)
+            {
+                player.body.velocity.x = -200;
+            }
+            else if (cursors.right.isDown)
+            {
+                player.body.velocity.x = 200;
+            }*/
+
+        }
+
+        function restart() {
+
+        }
+
+        function render() {
+
+            //game.debug.renderCameraInfo(game.camera, 32, 32);
+            //game.debug.renderSpriteCoords(player, 32, 200);
+            //game.debug.renderSpriteCoords(fixed, 600, 200);
+
+            // game.debug.renderSpriteCoords(game.world._container, 32, 400);
+
+        }
+
+
+    };
+
+    </script>
+
+    <div id="game-canvas"></div>
+
+    </body>
+</html>
